@@ -5,8 +5,8 @@ library(reactable)
 library(htmltools)
 library(crosstalk)
 
-# Load your data
-combined <- read_csv("/Users/jakecox/Downloads/990_combo.csv")
+# Load your data - UPDATED PATH
+combined <- read_csv("/Users/jakecox/rstudio/990-scraper/990_combo.csv")
 
 # Clean up the currency columns and convert to numeric
 table_data <- combined %>%
@@ -160,7 +160,7 @@ tbl <- reactable(
   columns = list(
     school = colDef(
       name = "School",
-      minWidth = 220,
+      minWidth = 250,
       style = function(value, index) {
         if (table_data$is_depaul[index]) {
           list(fontWeight = 600, fontSize = "15px", cursor = "pointer", color = "#0b305a")
@@ -169,29 +169,11 @@ tbl <- reactable(
         }
       }
     ),
-    Conference = colDef(
-      name = "Group",
-      width = 140,
-      align = "center",
-      style = function(value) {
-        if (value == "Big East") {
-          list(
-            fontWeight = 600,
-            color = "#0b305a",
-            fontSize = "13px"
-          )
-        } else {
-          list(
-            color = "#666",
-            fontSize = "13px"
-          )
-        }
-      }
-    ),
+    Conference = colDef(show = FALSE),  # Hide this column but keep it for filtering
     CEO_TOTAL = colDef(
       name = "CEO/President",
       align = "right",
-      minWidth = 160,
+      minWidth = 180,
       defaultSortOrder = "desc",
       format = colFormat(currency = "USD", separators = TRUE, digits = 0),
       na = "—",
@@ -203,7 +185,7 @@ tbl <- reactable(
     MBB_TOTAL = colDef(
       name = "Men's BB Coach",
       align = "right",
-      minWidth = 160,
+      minWidth = 180,
       defaultSortOrder = "desc",
       format = colFormat(currency = "USD", separators = TRUE, digits = 0),
       na = "—",
@@ -215,7 +197,7 @@ tbl <- reactable(
     WBB_TOTAL = colDef(
       name = "Women's BB Coach",
       align = "right",
-      minWidth = 160,
+      minWidth = 180,
       defaultSortOrder = "desc",
       format = colFormat(currency = "USD", separators = TRUE, digits = 0),
       na = "—",
@@ -267,7 +249,7 @@ tbl <- reactable(
 
 # Wrap in a nice container with title and filter toggle
 output <- div(
-  style = "max-width: 1300px; margin: 40px auto; padding: 20px; font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;",
+  style = "max-width: 1200px; margin: 40px auto; padding: 20px; font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;",
 
   # Add Google Font
   tags$head(
@@ -342,11 +324,12 @@ output <- div(
 # Display in viewer
 output
 
-# Save as HTML
-save_html(
+# Save as HTML with self-contained libraries - UPDATED SAVE METHOD
+htmlwidgets::saveWidget(
   output,
   "/Users/jakecox/Downloads/compensation_interactive.html",
-  libdir = "lib"
+  selfcontained = TRUE,
+  libdir = NULL
 )
 
 message("✓ Saved DePaul-branded interactive table to: /Users/jakecox/Downloads/compensation_interactive.html")
